@@ -1,0 +1,17 @@
+﻿@model SportsStore.Domain.Entities.Cart
+
+<div class="navbar-right">
+    @Html.ActionLink("結帳","Index","Cart",new
+    {
+        returnUrl = Request.Url.PathAndQuery // TODO 在結帳頁面按結帳會有問題
+    },new
+    {
+        @class="btn btn-default navbar-btn"
+    })
+</div>
+
+<div class="navbar-text navbar-right">
+    <b>您的購物車:</b>
+    @Model.Lines.Sum(x => x.Quantity) 項，
+    共計 @Model.ComputeTotalValue().ToString("c")
+</div>
