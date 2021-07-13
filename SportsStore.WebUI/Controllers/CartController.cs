@@ -16,48 +16,50 @@ namespace SportsStore.WebUI.Controllers
         public CartController(IProductRepository repository) => _repository = repository;
 
 
-        public RedirectToRouteResult Add2Cart(int productId,string returnUrl)
+        public RedirectToRouteResult Add2Cart(Cart cart,int productId,string returnUrl)
         {
             Product product = _repository.Products.FirstOrDefault(p => p.ProductID == productId);
             if (product != null)
             {
-                GetCart().AddItem(product,1);
+                cart.AddItem(product,1);
             }
             return RedirectToAction("Index", new { returnUrl });
         }
 
-        public RedirectToRouteResult RemoveFromCart(int productId,string returnUrl)
+        public RedirectToRouteResult RemoveFromCart(Cart cart, int productId,string returnUrl)
         {
             Product product = _repository.Products.FirstOrDefault(p => p.ProductID == productId);
 
             if (product != null)
             {
-                GetCart().RemoveLine(product);
+                cart.RemoveLine(product);
             }
 
             return RedirectToAction("Index", new { returnUrl });
         }
 
-        public ViewResult Index(string returnUrl)
+        public ViewResult Index(Cart cart,string returnUrl)
         {
             return View(new CartIndexViewModel()
             {
-                Cart = GetCart(),
+                Cart = cart,
                 ReturnUrl=returnUrl
             }) ;
         }
 
-        private Cart GetCart()
-        {
-            // TODO 替換實現，改成Redis
 
-            Cart cart = (Cart)Session["Cart"];
-            if (cart == null)
-            {
-                cart = new Cart();
-                Session["Cart"] = cart;
-            }
-            return cart;
-        }
+        //使用自定義模型綁定器替代
+        //private Cart GetCart()
+        //{
+        //    // TODO 替換實現，改成Redis
+
+        //    Cart cart = (Cart)Session["Cart"];
+        //    if (cart == null)
+        //    {
+        //        cart = new Cart();
+        //        Session["Cart"] = cart;
+        //    }
+        //    return cart;
+        //}
     }
 }

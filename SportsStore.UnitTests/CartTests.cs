@@ -1,7 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using SportsStore.Domain.Abstract;
 using SportsStore.Domain.Entities;
+using SportsStore.WebUI.Controllers;
+using SportsStore.WebUI.Models;
 using System;
 using System.Linq;
+using System.Web.Mvc;
 
 namespace SportsStore.UnitTests
 {
@@ -159,6 +164,77 @@ namespace SportsStore.UnitTests
 
             //斷言
             Assert.AreEqual(target.Lines.Count(), 0);
+        }
+
+        [TestMethod]
+        public void Can_Add_To_Cart()
+        {
+            //準備
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]
+                { 
+                    new Product()
+                    { 
+                        ProductID=1,
+                        Name="P1",
+                        Catagory="Apples"
+                    }
+                }.AsQueryable());
+
+            Cart cart = new Cart();
+            CartController target = new CartController(mock.Object);
+
+            //動作
+            target.Add2Cart(cart,1,null);
+
+            //斷言
+            Assert.AreEqual(cart.Lines.Count(),1);
+            Assert.AreEqual(cart.Lines.ToArray()[0].Product.ProductID, 1);
+        }
+
+        //測試將一個產品添加進購物車後，應將用戶重定向到Index視圖
+        [TestMethod]
+        public void Adding_Product_To_Cart_Goes_To_Cart_Screen()
+        {
+            //準備
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]
+                {
+                    new Product()
+                    {
+                        ProductID=1,
+                        Name="P1",
+                        Catagory="Apples"
+                    }
+                }.AsQueryable());
+
+            Cart cart = new Cart();
+            CartController target = new CartController(mock.Object);
+
+            //動作
+            RedirectToRouteResult result = target.Add2Cart(cart, 2, "myUrl");
+
+            //斷言
+            Assert.AreEqual(result.RouteValues["action"], "Index");
+            Assert.AreEqual(result.RouteValues["returnUrl"], "myUrl");
+        }
+
+        //測試Index動作方法
+        [TestMethod]
+        public void Can_View_Cart_Contents()
+        {
+            //準備
+            Cart cart = new Cart();
+            CartController target = new CartController(null);
+
+            //動作
+            CartIndexViewModel result = (CartIndexViewModel)target.Index(cart, "myUrl").ViewData.Model;
+            //也可以直接用Model屬性，Model屬性底層也是調用ViewData.Model
+            //CartIndexViewModel result = (CartIndexViewModel)target.Index(cart, "myUrl").Model;
+
+            //斷言
+            Assert.AreSame(result.Cart,cart);
+            Assert.AreEqual(result.ReturnUrl,"myUrl");
         }
     }
 }
