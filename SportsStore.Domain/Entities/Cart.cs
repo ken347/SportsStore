@@ -9,16 +9,27 @@ namespace SportsStore.Domain.Entities
     public class Cart
     {
         private List<CartLine> lineCollection = new List<CartLine>();
-
-        public IEnumerable<CartLine> Lines => lineCollection.AsReadOnly();
-
+ 
+        //public IEnumerable<CartLine> Lines => lineCollection.AsReadOnly();
+        //使用迭代器方法效能較好
+        public IEnumerable<CartLine> Lines
+        {
+            get
+            {
+                foreach (var line in lineCollection)
+                {
+                    yield return line;
+                };
+            }
+        }
+        
         public void AddItem(Product product, int quantity)
         {
             CartLine line = lineCollection
                 .Where(p => p.Product.ProductID == product.ProductID)
                 .FirstOrDefault();
 
-            if (line != null)
+            if (line == null)
             {
                 lineCollection.Add(new CartLine()
                 {
@@ -31,6 +42,8 @@ namespace SportsStore.Domain.Entities
                 line.Quantity += quantity;
             }
         }
+
+        public void RemoveLine(Product product) => lineCollection.RemoveAll(l=>l.Product.ProductID==product.ProductID);
 
         public decimal ComputeTotalValue()=> lineCollection.Sum(e => e.Product.Price * e.Quantity);
 
