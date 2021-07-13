@@ -16,7 +16,7 @@
         protected override void Seed(SportsStore.Domain.Concrete.EFDbContext context)
         {          
             // 加入初始資料
-            context.Products.AddOrUpdate(prod=>prod.ProductID,new Product[]
+            context.Products.AddOrUpdate(prod=>prod.Name,new Product[]
             {
                 new Product()
                 {
