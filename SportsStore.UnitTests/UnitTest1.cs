@@ -55,7 +55,7 @@ namespace SportsStore.UnitTests
             controller.pageSize = 3;
 
             //動作
-            ProductsListViewModel result = (ProductsListViewModel)controller.List(2).Model;
+            ProductsListViewModel result = (ProductsListViewModel)controller.List(null,2).Model;
 
             //斷言
             Product[] prodArray = result.Products.ToArray();
@@ -125,7 +125,7 @@ namespace SportsStore.UnitTests
             controller.pageSize = 3;
 
             //動作
-            ProductsListViewModel result = (ProductsListViewModel)controller.List(2).Model;
+            ProductsListViewModel result = (ProductsListViewModel)controller.List(null,2).Model;
 
             PagingInfo pageInfo = result.PagingInfo;
             Assert.AreEqual(pageInfo.CurrentPage,2);
