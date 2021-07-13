@@ -231,5 +231,37 @@ namespace SportsStore.UnitTests
             Assert.AreEqual(results[1], "Oranges");
             Assert.AreEqual(results[2],"Plums");
         }
+
+        [TestMethod]
+        public void Indicates_Selected_Category()
+        {
+            //準備
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m=>m.Products).Returns(new Product[]
+                {
+                     new Product()
+                    {
+                        ProductID=1,
+                        Name="P1",
+                        Catagory="Apples"
+                    },
+                    new Product()
+                    {
+                        ProductID=4,
+                        Name="P2",
+                        Catagory="Oranges"
+                    }
+                });
+
+            NavController target = new NavController(mock.Object);
+            string categoryToSelect = "Apples";
+
+            //動作
+            string result = target.Menu(categoryToSelect).ViewBag.SelectedCategory;
+
+            //斷言
+            Assert.AreEqual(categoryToSelect,result);
+
+        }
     }
 }
