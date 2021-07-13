@@ -1,5 +1,6 @@
 ﻿using SportsStore.Domain.Abstract;
 using SportsStore.Domain.Entities;
+using SportsStore.WebUI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace SportsStore.WebUI.Controllers
 
         public CartController(IProductRepository repository) => _repository = repository;
 
-        [HttpPost]
+
         public RedirectToRouteResult Add2Cart(int productId,string returnUrl)
         {
             Product product = _repository.Products.FirstOrDefault(p => p.ProductID == productId);
@@ -35,6 +36,15 @@ namespace SportsStore.WebUI.Controllers
             }
 
             return RedirectToAction("Index", new { returnUrl });
+        }
+
+        public ViewResult Index(string returnUrl)
+        {
+            return View(new CartIndexViewModel()
+            {
+                Cart = GetCart(),
+                ReturnUrl=returnUrl
+            }) ;
         }
 
         private Cart GetCart()
