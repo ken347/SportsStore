@@ -40,7 +40,7 @@ namespace SportsStore.WebUI
 
             routes.MapRoute(
                 name: null,
-                url: "{controller}/{action}}"
+                url: "{controller}/{action}"
             );
         }
     }
