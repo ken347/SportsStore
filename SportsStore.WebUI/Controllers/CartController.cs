@@ -49,6 +49,8 @@ namespace SportsStore.WebUI.Controllers
 
         public PartialViewResult Summary(Cart cart) => PartialView(cart);
 
+        public ViewResult Checkout() => View(new ShippingDetails());
+
         //使用自定義模型綁定器替代
         //private Cart GetCart()
         //{
