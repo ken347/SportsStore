@@ -1,0 +1,22 @@
+﻿@model IEnumerable<string>
+
+<div data-role="navbar">
+    <ul>
+        @foreach (var link in Model)
+        {
+            <li>
+                @Html.RouteLink(link, new
+           {
+               controller = "Product",
+               action = "List",
+               category =link,
+               page=1
+           },new
+           {
+               data_transition="fade", //應該要是data-transition，因為語言限制的替代方案，Razor能識別並轉換
+               @class =(link==ViewBag.SelectedCategory?"ui-btn-active":null)
+           })
+            </li>
+        }
+    </ul>
+</div>
