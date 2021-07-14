@@ -12,8 +12,13 @@ namespace SportsStore.WebUI.Controllers
     public class CartController : Controller
     {
         private IProductRepository _repository;
+        private IOrderProcessor _orderProcessor;
 
-        public CartController(IProductRepository repository) => _repository = repository;
+        public CartController(IProductRepository repository, IOrderProcessor orderProcessor)
+        { 
+            _repository = repository;
+            _orderProcessor = orderProcessor;
+        }
 
 
         public RedirectToRouteResult Add2Cart(Cart cart,int productId,string returnUrl)
@@ -50,6 +55,26 @@ namespace SportsStore.WebUI.Controllers
         public PartialViewResult Summary(Cart cart) => PartialView(cart);
 
         public ViewResult Checkout() => View(new ShippingDetails());
+
+        [HttpPost]
+        public ViewResult Checkout(Cart cart,ShippingDetails shippingDetails)
+        {
+            if (cart.Lines.Count() == 0)
+            {
+                ModelState.AddModelError("","很抱歉，您的購物車是空的...");
+            }
+
+            if (ModelState.IsValid)
+            {
+                _orderProcessor.ProcessOrder(cart, shippingDetails);
+                cart.Clear();
+                return View("Completed");
+            }
+            else
+            {
+                return View(shippingDetails);
+            }
+        }
 
         //使用自定義模型綁定器替代
         //private Cart GetCart()

@@ -19,8 +19,8 @@ namespace SportsStore.UnitTests
             //準備
             Product p1 = new Product()
             {
-                ProductID=1,
-                Name="P1"
+                ProductID = 1,
+                Name = "P1"
             };
 
             Product p2 = new Product()
@@ -39,7 +39,7 @@ namespace SportsStore.UnitTests
             //斷言
             Assert.AreEqual(results.Length, 2);
             Assert.AreEqual(results[0].Product, p1);
-            Assert.AreEqual(results[1].Product,p2);
+            Assert.AreEqual(results[1].Product, p2);
         }
 
         [TestMethod]
@@ -61,15 +61,15 @@ namespace SportsStore.UnitTests
             Cart target = new Cart();
 
             //動作
-            target.AddItem(p1,1);
-            target.AddItem(p2,1);
-            target.AddItem(p1,10);
-            CartLine[] results = target.Lines.OrderBy(c=>c.Product.ProductID).ToArray();
+            target.AddItem(p1, 1);
+            target.AddItem(p2, 1);
+            target.AddItem(p1, 10);
+            CartLine[] results = target.Lines.OrderBy(c => c.Product.ProductID).ToArray();
 
             //斷言
-            Assert.AreEqual(results.Length,2);
+            Assert.AreEqual(results.Length, 2);
             Assert.AreEqual(results[0].Quantity, 11);
-            Assert.AreEqual(results[1].Quantity,1);
+            Assert.AreEqual(results[1].Quantity, 1);
         }
 
         [TestMethod]
@@ -92,19 +92,19 @@ namespace SportsStore.UnitTests
                 Name = "P3"
             };
 
-            Cart target= new Cart();
+            Cart target = new Cart();
 
-            target.AddItem(p1,1);
+            target.AddItem(p1, 1);
             target.AddItem(p2, 3);
-            target.AddItem(p3,5);
+            target.AddItem(p3, 5);
             target.AddItem(p2, 1);
 
             //動作
             target.RemoveLine(p2);
 
             //斷言
-            Assert.AreEqual(target.Lines.Where(c=>c.Product==p2).Count(),0);
-            Assert.AreEqual(target.Lines.Count(),2);
+            Assert.AreEqual(target.Lines.Where(c => c.Product == p2).Count(), 0);
+            Assert.AreEqual(target.Lines.Count(), 2);
         }
 
         [TestMethod]
@@ -115,25 +115,25 @@ namespace SportsStore.UnitTests
             {
                 ProductID = 1,
                 Name = "P1",
-                Price=100M
+                Price = 100M
             };
             Product p2 = new Product()
             {
                 ProductID = 2,
                 Name = "P2",
-                Price=50M
+                Price = 50M
             };
 
             Cart target = new Cart();
 
             //動作
-            target.AddItem(p1,1);
+            target.AddItem(p1, 1);
             target.AddItem(p2, 1);
             target.AddItem(p1, 3);
             decimal result = target.ComputeTotalValue();
 
             //斷言
-            Assert.AreEqual(result,450M);
+            Assert.AreEqual(result, 450M);
 
         }
 
@@ -156,8 +156,8 @@ namespace SportsStore.UnitTests
 
             Cart target = new Cart();
 
-            target.AddItem(p1,1);
-            target.AddItem(p2,1);
+            target.AddItem(p1, 1);
+            target.AddItem(p2, 1);
 
             //動作
             target.Clear();
@@ -172,9 +172,9 @@ namespace SportsStore.UnitTests
             //準備
             Mock<IProductRepository> mock = new Mock<IProductRepository>();
             mock.Setup(m => m.Products).Returns(new Product[]
-                { 
+                {
                     new Product()
-                    { 
+                    {
                         ProductID=1,
                         Name="P1",
                         Catagory="Apples"
@@ -182,13 +182,13 @@ namespace SportsStore.UnitTests
                 }.AsQueryable());
 
             Cart cart = new Cart();
-            CartController target = new CartController(mock.Object);
+            CartController target = new CartController(mock.Object, null);
 
             //動作
-            target.Add2Cart(cart,1,null);
+            target.Add2Cart(cart, 1, null);
 
             //斷言
-            Assert.AreEqual(cart.Lines.Count(),1);
+            Assert.AreEqual(cart.Lines.Count(), 1);
             Assert.AreEqual(cart.Lines.ToArray()[0].Product.ProductID, 1);
         }
 
@@ -209,7 +209,7 @@ namespace SportsStore.UnitTests
                 }.AsQueryable());
 
             Cart cart = new Cart();
-            CartController target = new CartController(mock.Object);
+            CartController target = new CartController(mock.Object, null);
 
             //動作
             RedirectToRouteResult result = target.Add2Cart(cart, 2, "myUrl");
@@ -225,7 +225,7 @@ namespace SportsStore.UnitTests
         {
             //準備
             Cart cart = new Cart();
-            CartController target = new CartController(null);
+            CartController target = new CartController(null, null);
 
             //動作
             CartIndexViewModel result = (CartIndexViewModel)target.Index(cart, "myUrl").ViewData.Model;
@@ -233,8 +233,88 @@ namespace SportsStore.UnitTests
             //CartIndexViewModel result = (CartIndexViewModel)target.Index(cart, "myUrl").Model;
 
             //斷言
-            Assert.AreSame(result.Cart,cart);
-            Assert.AreEqual(result.ReturnUrl,"myUrl");
+            Assert.AreSame(result.Cart, cart);
+            Assert.AreEqual(result.ReturnUrl, "myUrl");
+        }
+
+        //測試購物車為空時進行結帳的情境
+        [TestMethod]
+        public void Can_Checkout_Empty_Cart()
+        {
+            //準備
+            Mock<IOrderProcessor> mock = new Mock<IOrderProcessor>();
+
+            Cart cart = new Cart();
+
+            ShippingDetails shippingDetails = new ShippingDetails();
+
+            CartController target = new CartController(null,mock.Object);
+
+            //動作
+            ViewResult result = target.Checkout(cart,shippingDetails);
+
+            //斷言
+            
+            //檢查，訂單尚未傳遞給處理器，檢查是否調用ProcessOrder方法
+            mock.Verify(m => m.ProcessOrder(It.IsAny<Cart>(), It.IsAny<ShippingDetails>())
+            , Times.Never);
+
+            //檢查，該方法返回的是默認視圖
+            Assert.AreEqual("",result.ViewName);
+
+            //檢查，給視圖傳遞的是一個非法模型
+            Assert.AreEqual(false,result.ViewData.ModelState.IsValid);
+        }
+
+        //測試回傳模型不合法時的情境
+        [TestMethod]
+        public void Cannot_Checkout_Invalid_ShippingDetails()
+        {
+            //準備
+            Mock<IOrderProcessor> mock = new Mock<IOrderProcessor>();
+
+            Cart cart = new Cart();
+            cart.AddItem(new Product(),1);
+
+            CartController target = new CartController(null,mock.Object);
+
+            target.ModelState.AddModelError("error", "error");
+
+            //動作
+            ViewResult result = target.Checkout(cart,new ShippingDetails());
+
+            //斷言
+            mock.Verify(m => m.ProcessOrder(It.IsAny<Cart>(), It.IsAny<ShippingDetails>())
+            , Times.Never);
+
+            Assert.AreEqual("",result.ViewName);
+            Assert.AreEqual(false,result.ViewData.ModelState.IsValid);
+
+        }
+
+        //測試在正常情況下訂單能夠被正常處理
+        [TestMethod]
+        public void Can_Checkout_And_Submit_Order()
+        {
+            //準備
+            Mock<IOrderProcessor> mock = new Mock<IOrderProcessor>();
+
+            Cart cart = new Cart();
+            cart.AddItem(new Product(),1);
+
+            CartController target = new CartController(null,mock.Object);
+
+            //動作
+
+            //因為不在MVC框架下，沒有模型綁定器，所以ShippingDetails的驗證不會進行
+            ViewResult result = target.Checkout(cart,new ShippingDetails());
+
+            //斷言
+            mock.Verify(m => m.ProcessOrder(It.IsAny<Cart>(), It.IsAny<ShippingDetails>())
+            , Times.Once);
+
+            Assert.AreEqual("Completed", result.ViewName);
+            Assert.AreEqual(true, result.ViewData.ModelState.IsValid);
         }
     }
 }
