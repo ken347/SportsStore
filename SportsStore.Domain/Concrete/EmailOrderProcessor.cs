@@ -22,7 +22,7 @@ namespace SportsStore.Domain.Concrete
         public int ServerPort = 587;
         // 沒有SMTP的替代方案，將郵件信息以.eml檔格式寫到指定的資料夾
         public bool WriteAsFile = true;  
-        public string FileLocation = @"c:\sports_store_emails";
+        public string FileLocation = @"C:\root\RH\sports_store_emails";
     }
 
     public class EmailOrderProcessor : IOrderProcessor
