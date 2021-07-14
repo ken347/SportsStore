@@ -3,6 +3,10 @@
 @{
     ViewBag.Title = $"管理者: 編輯 {Model.Name}";
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    //禁用客戶端驗證
+    //HtmlHelper.ClientValidationEnabled=false;
+    //HtmlHelper.UnobtrusiveJavaScriptEnabled = false;
 }
 
 <div class="panel">
