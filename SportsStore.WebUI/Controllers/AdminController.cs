@@ -21,9 +21,24 @@ namespace SportsStore.WebUI.Controllers
 
         public ViewResult Edit(int productId)
         {
-            Product product = _repository.Products.FirstOrDefault(p=>p.ProductID==productId);
+            Product product = _repository.Products.FirstOrDefault(p => p.ProductID == productId);
 
             return View(product);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(Product product)
+        {
+            if (ModelState.IsValid)
+            {
+                _repository.SaveProduct(product);
+                TempData["message"] = $"{product.Name}已被儲存";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View();
+            }
         }
     }
 }
