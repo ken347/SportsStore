@@ -157,5 +157,37 @@ namespace SportsStore.UnitTests
             mock.Verify(m => m.SaveProduct(It.IsAny<Product>()), Times.Never);
             Assert.IsInstanceOfType(result, typeof(ViewResult));
         }
+
+        [TestMethod]
+        public void Can_Delete_Valid_Products()
+        {
+            //準備
+            Product product = new Product() { ProductID=2,Name="Test"};
+            Mock<IProductRepository> mock = new Mock<IProductRepository>();
+            mock.Setup(m => m.Products).Returns(new Product[]
+                { 
+                    new Product()
+                    { 
+                        ProductID=1,
+                        Name="P1"
+                    },
+                    product,
+                    new Product()
+                    { 
+                        ProductID=3,
+                        Name="P3"
+                    }
+                });
+
+            AdminController target = new AdminController(mock.Object);
+
+            //動作
+            target.Delete(product.ProductID);
+
+            //斷言
+
+            //確保倉儲庫的刪除方法是針對正確的產品被調用的
+            mock.Verify(m => m.DeleteProduct(product.ProductID));
+        }
     }
 }
