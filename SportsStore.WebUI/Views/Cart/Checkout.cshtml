@@ -9,6 +9,8 @@
 
 @using (Html.BeginForm())
 {
+    @Html.ValidationSummary()
+
     <h3>運送</h3>
     <div class="form-group">
         <label>姓名:</label>
@@ -26,34 +28,6 @@
             </div>
         }
     }
-    @*<div class="form-group">
-        <label>地址第一行:</label>
-        @Html.TextAreaFor(x => x.Line1, new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        <label>地址第二行:</label>
-        @Html.TextAreaFor(x => x.Line2, new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        <label>地址第三行:</label>
-        @Html.TextAreaFor(x => x.Line3, new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        <label>城市:</label>
-        @Html.TextAreaFor(x => x.City, new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        <label>州:</label>
-        @Html.TextAreaFor(x => x.State, new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        <label>郵遞區號:</label>
-        @Html.TextAreaFor(x => x.Zip, new { @class = "form-control" })
-    </div>
-    <div class="form-group">
-        <label>國家:</label>
-        @Html.TextAreaFor(x => x.Country, new { @class = "form-control" })
-    </div>*@
 
     <h3>選項</h3>
     <div class="checkbox">
