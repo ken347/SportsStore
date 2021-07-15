@@ -88,6 +88,10 @@
     <Compile Include="Migrations\202107121640434_ChangeColumnTypeLimited.designer.cs">
       <DependentUpon>202107121640434_ChangeColumnTypeLimited.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202107150750059_UpdateColumnsWithImageDataAndImageMimeType.cs" />
+    <Compile Include="Migrations\202107150750059_UpdateColumnsWithImageDataAndImageMimeType.designer.cs">
+      <DependentUpon>202107150750059_UpdateColumnsWithImageDataAndImageMimeType.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -101,6 +105,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202107121640434_ChangeColumnTypeLimited.resx">
       <DependentUpon>202107121640434_ChangeColumnTypeLimited.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202107150750059_UpdateColumnsWithImageDataAndImageMimeType.resx">
+      <DependentUpon>202107150750059_UpdateColumnsWithImageDataAndImageMimeType.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

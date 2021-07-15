@@ -33,5 +33,9 @@ namespace SportsStore.Domain.Entities
         [MaxLength(50)]
         [Display(Name = "分類")]
         public string Catagory { get; set; }
+
+        public byte[] ImageData { get; set; }
+
+        public string ImageMimeType { get; set; }
     }
 }
