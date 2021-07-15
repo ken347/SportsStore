@@ -14,38 +14,72 @@
         <h3>編輯 @Model.Name</h3>
     </div>
 
-    @using (Html.BeginForm("Edit", "Admin"))
+    @using (Html.BeginForm("Edit", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
     {
-        @Html.HiddenFor(m=>m.ProductID)
+        @Html.HiddenFor(m => m.ProductID)
         <div class="panel-body">
             @foreach (var property in ViewData.ModelMetadata.Properties)
             {
-                if (property.PropertyName != "ProductID")
+                switch (property.PropertyName)
                 {
-                    <div class="form-group">
-                        <label>@(property.DisplayName ?? property.PropertyName)</label>
-                        @if (property.PropertyName == "Description")
+                    case "Product":
+                    case "ImageData":
+                    case "ImageMimeType":
+                        break;
+                    default:
+                        <div class="form-group">
+                            <label>@(property.DisplayName ?? property.PropertyName)</label>
+                            @if (property.PropertyName == "Description")
+                            {
+                                @Html.TextArea(property.PropertyName, null,
+                                    new { @class = "form-control", rows = 5 })
+                            }
+                            else
+                            {
+                                @Html.TextBox(property.PropertyName, null,
+                                    new { @class = "form-control" })
+                            }
+                            @Html.ValidationMessage(property.PropertyName)
+                        </div>
+                        break;
+                }
+            }
+
+            <div class="form-group">
+                <div style="position:relative">
+                    <label>圖片</label>
+                    <a href="javascript:void(0);">
+                        選擇檔案...
+                        <input type="file" name="Image" size="40"
+                               style="position:absolute;z-index:2;top:0;left:0;filter:alpha(opacity=0);opacity:0;
+                            background-color:transparent;color:transparent;"
+                               onchange='$("#upload-file-info").html($(this).val());' />
+                    </a>
+                    <span class="label label-info" id="upload-file-info"></span>
+                    <div>
+                        @if (Model.ImageData == null)
                         {
-                            @Html.TextArea(property.PropertyName, null,
-                                new { @class = "form-control", rows = 5 })
+                            <div class="form-control-static">
+                                沒有圖片
+                            </div>
                         }
                         else
                         {
-                            @Html.TextBox(property.PropertyName, null,
-                                new { @class = "form-control" })
+                            <img class="img-thumbnail" width="150" height="150"
+                                 src="@Url.Action("GetImage","Product",new { Model.ProductID})" />
                         }
-                        @Html.ValidationMessage(property.PropertyName)
                     </div>
-                }
-            }
+                </div>
+            </div>
+
         </div>
 
         <div class="panel-footer">
             <input type="submit" value="儲存" class="btn btn-primary" />
             @Html.ActionLink("取消並返回列表", "Index", null, new
             {
-           @class = "btn btn-default"
-       })
+                @class = "btn btn-default"
+            })
         </div>
     }
 </div>
